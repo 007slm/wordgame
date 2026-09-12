@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#4F46E5">
+  <meta name="description" content="专为10岁儿童设计的单词消消乐游戏。通过趣味中英配对消除，结合智能掌握度记忆算法与纯正自然发音，帮助孩子轻松掌握3500核心英语单词。">
+  <title>单词消消乐 - 10岁趣味背单词助手</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Android 手机屏幕自适应容器 -->
+  <div id="app-container">
+    
+    <!-- 顶部状态栏 -->
+    <header class="game-header">
+      <div class="top-bar-row">
+        <!-- 用户信息 -->
+        <div class="user-profile-pill" id="user-profile-pill" title="点击可修改昵称">
+          <span class="user-avatar">👦</span>
+          <span class="user-name" id="user-name-text">星澔</span>
+        </div>
+
+        <div class="level-badge" id="level-badge">
+          <span>🏆</span>
+          <span id="level-badge-text">第 1 关</span>
+        </div>
+        
+        <div class="resource-group">
+          <div class="stat-pill score" title="当前累计积分">
+            <span>⭐</span>
+            <span id="score-val">0</span>
+          </div>
+          <div class="stat-pill coins" title="通关与连击赚取的金币">
+            <span>🪙</span>
+            <span id="coin-val">50</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 单元词汇零漏词覆盖进度条 -->
+      <div class="module-progress-bar" id="module-progress-bar" style="background: #FFFFFF; border-radius: 12px; padding: 5px 12px; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 700; border: 1px solid #E0E7FF; box-shadow: var(--shadow-sm);">
+        <span id="module-name-label" style="color: #4F46E5; display: flex; align-items: center; gap: 4px;">🎒 外研三上·M1 基础问候</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 80px; height: 7px; background: #E2E8F0; border-radius: 6px; overflow: hidden;">
+            <div id="module-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10B981, #059669); border-radius: 6px; transition: width 0.3s ease;"></div>
+          </div>
+          <span id="module-progress-text" style="color: #059669; font-weight: 800;">0/12 词 (0%)</span>
+        </div>
+      </div>
+
+      <!-- 连击激励进度条 -->
+      <div class="combo-container">
+        <div class="combo-bar-fill" id="combo-fill"></div>
+        <div class="combo-text" id="combo-label">连击快速消除奖励加倍</div>
+      </div>
+    </header>
+
+    <!-- 连击飘字提示 -->
+    <div class="combo-popup" id="combo-popup">🔥 连击 x2!</div>
+
+    <!-- 消除粒子特效层 -->
+    <div class="particles-layer" id="particles-layer"></div>
+
+    <!-- 主视图区域 (多 Tab 容器) -->
+    <main class="main-views-container">
+      
+      <!-- Tab 1: 消消乐游戏主盘面 -->
+      <section class="tab-view-page active" id="view-game">
+        <div class="board-wrapper">
+          <div class="cards-grid" id="cards-grid">
+            <!-- 卡片由 game_core.js 动态生成 -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 2: 单词深度详尽学习界面 (专业儿童研读卡) -->
+      <!-- 单词详细解释与深度学习 Tab (平直精致卡片，无突兀弧形边框) -->
+      <section class="tab-view-page" id="view-detail">
+        <div class="detail-page-content">
+          
+          <!-- 1. 顶部本关词汇快速切换导航条 -->
+          <div class="stage-nav-card">
+            <div class="stage-nav-head">
+              <div class="nav-title-group">
+                <span class="nav-icon">📖</span>
+                <span class="nav-title">本关单词精讲</span>
+                <span class="nav-counter" id="detail-stage-counter">1/8</span>
+              </div>
+              <div class="nav-switch-btns">
+                <button class="nav-arrow-btn" id="btn-prev-word" title="上一个单词">◀ 上一个</button>
+                <button class="nav-arrow-btn" id="btn-next-word" title="下一个单词">下一个 ▶</button>
+              </div>
+            </div>
+            <div class="stage-chips-scroll" id="detail-stage-words">
+              <!-- 动态注入当前关卡单词小药丸 -->
+            </div>
+          </div>
+
+          <!-- 2. 主视觉单词展示大卡片 -->
+          <div class="study-hero-card">
+            <div class="hero-top-badges">
+              <span class="badge-pill badge-stage" id="detail-level-tag">🎒 外研三上·M1·考纲核心</span>
+              <span class="badge-pill badge-cat" id="detail-category-tag">🏷️ 问候</span>
+              <span class="badge-pill badge-pos" id="detail-pos-tag">📘 n. 问候语/感叹词</span>
+            </div>
+
+            <div class="hero-main-row">
+              <div class="hero-text-col">
+                <h1 class="hero-word-spelling" id="detail-word-title">hello</h1>
+                
+                <div class="hero-phonics-row">
+                  <div class="syllable-badge">
+                    <span class="syllable-prefix">自然拼读:</span>
+                    <span class="syllable-content" id="detail-syllable-val">he · llo</span>
+                  </div>
+                  <div class="phonetic-badge" id="detail-phonetic">/həˈləʊ/</div>
+                </div>
+              </div>
+
+              <!-- 大号发音按钮 -->
+              <button class="hero-speak-button" id="btn-detail-speak" title="点击朗读纯正真人美音">
+                <span class="speak-anim-wave">🔊</span>
+                <span class="speak-label">真人发音</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. 结构化知识卡片网格 (采用现代轻阴影微边框，彻底杜绝粗糙弧形边) -->
+          <div class="study-cards-flow">
+            
+            <!-- 卡片 A: 中文精准释义与词形变化 -->
+            <div class="study-card">
+              <div class="card-head">
+                <div class="head-icon icon-blue">📚</div>
+                <div class="head-title">中文释义与词态变化</div>
+              </div>
+              <div class="card-body">
+                <div class="meaning-display-text" id="detail-meaning">你好</div>
+                <div class="forms-badge-box" id="detail-forms">日常交际最基础礼貌问候</div>
+              </div>
+            </div>
+
+            <!-- 卡片 B: 北京考纲提分/避坑考点 -->
+            <div class="study-card">
+              <div class="card-head">
+                <div class="head-icon icon-amber">🎯</div>
+                <div class="head-title">北京中高考常考考点</div>
+              </div>
+              <div class="card-body">
+                <div class="exam-tips-box" id="detail-exam-tip">
+                  💡 备考指南：北京外研社三年级起点第 1 单元核心问候词，熟练用于打招呼与开启对话。
+                </div>
+              </div>
+            </div>
+
+            <!-- 卡片 C: 生活情境实用助记例句 (带独立发音) -->
+            <div class="study-card">
+              <div class="card-head" style="justify-content: space-between;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <div class="head-icon icon-green">💬</div>
+                  <div class="head-title">生活情境双语例句</div>
+                </div>
+                <button class="sub-speak-btn" id="btn-sentence-speak" title="朗读此英文例句">
+                  <span>🔊 读例句</span>
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="sentence-en-box" id="detail-sentence-en">
+                  Hello, I am Sam.
+                </div>
+                <div class="sentence-cn-box" id="detail-sentence-cn">
+                  你好，我是萨姆。
+                </div>
+              </div>
+            </div>
+
+            <!-- 卡片 D: 常用地道短语与搭配 -->
+            <div class="study-card">
+              <div class="card-head">
+                <div class="head-icon icon-cyan">🔗</div>
+                <div class="head-title">常用高频短语搭配</div>
+              </div>
+              <div class="card-body">
+                <div class="collocation-pills-wrap" id="detail-phrases-list">
+                  <!-- 动态填入短语小胶囊 -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 卡片 E: 自然拼读与趣味助记 -->
+            <div class="study-card">
+              <div class="card-head">
+                <div class="head-icon icon-purple">💡</div>
+                <div class="head-title">自然拼读与巧记技巧</div>
+              </div>
+              <div class="card-body">
+                <div class="memory-tip-box" id="detail-memory-tip">
+                  首字母 h 气流轻送，双写 l 发清脆舌尖音，礼貌打招呼随时用。
+                </div>
+              </div>
+            </div>
+
+            <!-- 卡片 F: 星澔的专属学习进度档案 -->
+            <div class="study-card">
+              <div class="card-head">
+                <div class="head-icon icon-gold">🌟</div>
+                <div class="head-title">星澔的学习档案</div>
+              </div>
+              <div class="card-body">
+                <div class="mastery-status-strip">
+                  <div class="mastery-gold-stars" id="detail-mastery-stars">★★★★☆</div>
+                  <div class="mastery-status-text" id="detail-mastery-desc">正在攻克中 (连续消除1次)</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Tab 3: 设置与自主选关全屏视图 (Tab切换效果) -->
+      <section class="tab-view-page" id="view-settings">
+        <div class="settings-page-content">
+          
+          <!-- 总关卡徽标 -->
+          <div class="settings-total-badge">
+            <span>🎯</span>
+            <span>大纲关卡库：<strong>共 75 关</strong> · 外研社小学 1~25 关 · 初高中 26~75 关</span>
+          </div>
+
+          <!-- 关卡自主选择与单元说明专区 -->
+          <div class="level-jump-card">
+            <div class="jump-card-header">
+              <span class="jump-icon">🚀</span>
+              <span class="jump-title">自主跳关与单元直达</span>
+            </div>
+
+            <!-- 下拉选单与跳转按钮 -->
+            <div class="jump-control-row">
+              <select id="level-select-dropdown" class="level-select-input" aria-label="选择关卡">
+                <!-- JS 动态填充所有 75 关分组选项 -->
+              </select>
+              <button id="btn-jump-level" class="btn-jump-action">开始闯关 🚀</button>
+            </div>
+
+            <!-- 当前关卡对应年级与单元的深度说明卡片 -->
+            <div class="level-explain-box" id="level-explain-box">
+              <div class="explain-top-line">
+                <span class="explain-grade-tag" id="explain-grade-tag">外研社·三年级上册</span>
+                <span class="explain-unit-tag" id="explain-unit-tag">Module 1</span>
+              </div>
+              <div class="explain-name" id="explain-name">🎒 外研三上·M1 基础问候</div>
+              <div class="explain-sub" id="explain-sub">最简单的高频问候与交友 (hello, morning, you, I...)</div>
+              <div class="explain-count" id="explain-count">包含 12 个重点词 · 零漏词全掌握后晋级</div>
+            </div>
+          </div>
+
+          <!-- 常规功能设置 -->
+          <div class="settings-opt-card">
+            <div class="opt-card-title">⚙️ 游戏体验设置</div>
+            <div class="settings-opt-list">
+              <div class="summary-row" style="align-items: center;">
+                <span>消除与连击音效</span>
+                <input type="checkbox" id="chk-sound" checked style="width: 20px; height: 20px; accent-color: #4F46E5;">
+              </div>
+              <div class="summary-row" style="align-items: center;">
+                <span>单词纯正自然发音</span>
+                <input type="checkbox" id="chk-speech" checked style="width: 20px; height: 20px; accent-color: #4F46E5;">
+              </div>
+              <div class="summary-row" style="align-items: center; justify-content: space-between;">
+                <span>重置关卡起点</span>
+                <button id="btn-reset-level" style="background: #EEF2FF; border: 1px solid #C7D2FE; color: #4F46E5; padding: 6px 12px; border-radius: 10px; font-size: 12px; cursor: pointer; font-weight: 700;">🔄 重置到第1关 (三上M1)</button>
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size: 11px; color: #94A3B8; text-align: center; margin: 12px 0 10px 0;">
+            * 词库严格对标北京大兴区外研社教材，支持自由换关，零漏词学完才晋级。
+          </p>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 底部 Tab 导航栏 (严格4等分均分) -->
+    <footer class="game-footer">
+      <button class="tool-btn active" id="tab-btn-game" title="消消乐游戏主界面">
+        <div class="tool-circle">🎮</div>
+        <span class="tool-name">消除</span>
+      </button>
+
+      <button class="tool-btn" id="btn-hint" title="提示一对单词 (消耗15金币)">
+        <span class="cost-tag">15🪙</span>
+        <div class="tool-circle">💡</div>
+        <span class="tool-name">提示</span>
+      </button>
+
+      <button class="tool-btn" id="tab-btn-detail" title="切换到单词详细解释与学习页面">
+        <div class="tool-circle">📘</div>
+        <span class="tool-name">详解</span>
+      </button>
+
+      <button class="tool-btn" id="tab-btn-settings" title="切换到设置与自主选关页面">
+        <div class="tool-circle">⚙️</div>
+        <span class="tool-name">设置</span>
+      </button>
+    </footer>
+
+    <!-- ==================== 模态弹窗系统 ==================== -->
+
+    <!-- 1. 关卡胜利结算弹窗 -->
+    <div class="modal-overlay" id="victory-modal">
+      <div class="modal-card">
+        <h2 class="modal-title">🎉 恭喜通关！</h2>
+        <div class="victory-stars" id="victory-stars">⭐⭐⭐</div>
+
+        <div class="level-summary-card">
+          <div class="summary-row">
+            <span>关卡得分</span>
+            <span class="val" id="summary-score">+320 分</span>
+          </div>
+          <div class="summary-row">
+            <span>赚取金币</span>
+            <span class="val" id="summary-coins">+15 金币</span>
+          </div>
+          <div class="summary-row">
+            <span>最高连击</span>
+            <span class="val" id="summary-combo">4 次</span>
+          </div>
+        </div>
+
+        <button class="btn-large" id="btn-next-level">进入下一关 🚀</button>
+      </div>
+    </div>
+
+    <!-- 2. 生词本与掌握度手册弹窗 -->
+    <div class="modal-overlay" id="wordbook-modal">
+      <div class="modal-card" style="max-height: 88vh;">
+        <h2 class="modal-title">📖 我的词汇小宝库</h2>
+        
+        <!-- 统计条 -->
+        <div id="wb-stats-summary" style="width: 100%; margin-bottom: 12px;"></div>
+
+        <!-- 词汇掌握列表 -->
+        <div class="wordbook-list" id="wb-list"></div>
+
+        <button class="btn-large" id="btn-close-wb" style="margin-top: 14px;">返回游戏</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 脚本引用 -->
+  <script src="js/words_data.js"></script>
+  <script src="js/audio_manager.js"></script>
+  <script src="js/storage_manager.js"></script>
+  <script src="js/game_core.js"></script>
+</body>
+</html>

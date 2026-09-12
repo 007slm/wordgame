@@ -1,0 +1,9 @@
+{
+  "appId": "com.xinghao.wordgame",
+  "appName": "单词消消乐",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
