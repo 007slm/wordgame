@@ -63,4 +63,5 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\build_apk.ps1
 ---
 
 ## 📄 开源许可
-[ISC License](LICENSE)
+本项目遵循 [MIT License](LICENSE) 开源协议。
+

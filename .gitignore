@@ -1,9 +1,14 @@
 # Dependencies
 node_modules/
+.pnp
+.pnp.js
 
-# Build artifacts
+# Build artifacts & Packaging
+dist/
 dist-apk/
 www/
+*.apk
+*.aab
 
 # Android build outputs & IDE
 android/.gradle/
@@ -14,11 +19,56 @@ android/local.properties
 android/*.iml
 android/app/*.iml
 android/.cxx/
+android/captures/
+android/.navigation/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+android/app/src/main/res/xml/config.xml
+android/capacitor-cordova-android-plugins/
 
-# Editor & OS files
-.vscode/
-.idea/
-*.log
+# Keystores & Signing Keys
+*.jks
+*.keystore
+*.key
+*.pem
+
+# Logs
 logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+
+# Editor & IDE configs
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Temporary & Test files
+tmp/
+temp/
+scratch/

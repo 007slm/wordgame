@@ -1,15 +1,21 @@
 {
   "name": "wordgame",
   "version": "1.0.0",
-  "description": "",
+  "description": "趣味单词消除与沉浸式背单词助手 (Word Match Master)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:apk": "powershell -NoProfile -ExecutionPolicy Bypass -File ./build_apk.ps1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "wordgame",
+    "english-learning",
+    "gamification",
+    "capacitor",
+    "android"
+  ],
+  "author": "007slm",
+  "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "@capacitor/android": "^8.5.1",
